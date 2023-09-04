@@ -58,6 +58,7 @@ const CarritoModal = ({ isVisible, onHideModal, items, onUpdateQuantity }) => {
   };
 
   return (
+
     // Componente de Modal que muestra el carrito de compras
     <Modal
       visible={isVisible}
@@ -66,22 +67,26 @@ const CarritoModal = ({ isVisible, onHideModal, items, onUpdateQuantity }) => {
       onRequestClose={onHideModal}
     >
       <View style={styles.cartModal}>
+
         {/* Título del modal */}
         <Text style={styles.cartModalTitle}>Detalle de la Compra</Text>
         <ScrollView>
           <View style={styles.cartItemsContainer}>
+
             {/* Encabezado de la tabla */}
             <View style={styles.tableHeader}>
               <Text style={styles.tableHeaderText}>Artículo</Text>
               <Text style={styles.tableHeaderText}>Cantidad</Text>
               <Text style={styles.tableHeaderText}>Subtotal</Text>
             </View>
+
             {/* Lista de artículos en el carrito */}
             {items.map((item, index) => (
               <View key={item.id} style={styles.cartItem}>
                 <Text style={styles.cartItemName}>
                   {item.name}
                 </Text>
+
                 {/* Controles para aumentar y disminuir la cantidad */}
                 <View style={styles.cartItemControls}>
                   <TouchableOpacity
@@ -98,6 +103,7 @@ const CarritoModal = ({ isVisible, onHideModal, items, onUpdateQuantity }) => {
                     <Text style={styles.quantityButtonText}>+</Text>
                   </TouchableOpacity>
                 </View>
+
                 {/* Subtotal del artículo */}
                 <Text style={styles.cartItemSubtotal}>
                   ${(item.price * item.quantity).toFixed(2)}
@@ -106,10 +112,13 @@ const CarritoModal = ({ isVisible, onHideModal, items, onUpdateQuantity }) => {
             ))}
           </View>
         </ScrollView>
+
         {/* Total de la compra */}
         <Text style={styles.totalText}>Total: ${total}</Text>
+
         {/* Contenedor de botones */}
         <View style={styles.buttonsContainer}>
+
           {/* Botón para seguir comprando */}
           <TouchableOpacity
             style={styles.continueShoppingButton}
@@ -120,10 +129,12 @@ const CarritoModal = ({ isVisible, onHideModal, items, onUpdateQuantity }) => {
               Seguir Comprando
             </Text>
           </TouchableOpacity>
+
           {/* Botón para finalizar la compra */}
           <TouchableOpacity
             style={styles.checkoutButton}
             onPress={() => {
+
               // Aqui Iria Toda la Logica para Finalizar la Compra y las Opciones de Pago
               onHideModal();
             }}
@@ -139,6 +150,7 @@ const CarritoModal = ({ isVisible, onHideModal, items, onUpdateQuantity }) => {
 
 // Estilos del componente
 const styles = StyleSheet.create({
+
   // Estilo del modal principal
   cartModal: {
     flex: 1,
@@ -148,6 +160,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
   },
+
   // Estilo del título del modal
   cartModalTitle: {
     fontSize: 30,
@@ -156,16 +169,19 @@ const styles = StyleSheet.create({
     color: '#333333',
     textAlign: 'center',
   },
+
   // Estilo del contenedor de los elementos del carrito
   cartItemsContainer: {
     marginBottom: 40,
   },
+
   // Estilo del encabezado de la tabla
   tableHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 10,
   },
+
   // Estilo de los encabezados de la tabla
   tableHeaderText: {
     fontSize: 18,
@@ -174,6 +190,7 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
+
   // Estilo de un artículo en la lista del carrito
   cartItem: {
     flexDirection: 'row',
@@ -181,6 +198,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
+
   // Estilo del nombre del artículo
   cartItemName: {
     fontSize: 18,
@@ -188,6 +206,7 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
+
   // Estilo de la cantidad del artículo
   cartItemQuantity: {
     fontSize: 16,
@@ -196,6 +215,7 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
+
   // Estilo del subtotal del artículo
   cartItemSubtotal: {
     fontSize: 16,
@@ -203,6 +223,7 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
+
   // Estilo de los controles de cantidad (+ y -)
   cartItemControls: {
     flexDirection: 'row',
@@ -210,18 +231,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
+
   // Estilo del botón de cantidad (+ y -)
   quantityButton: {
     backgroundColor: '#0047AB',
     borderRadius: 5,
     padding: 5,
   },
+
   // Estilo del texto de los botones de cantidad (+ y -)
   quantityButtonText: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#FFFFFF',
   },
+
   // Estilo del texto que muestra el total de la compra
   totalText: {
     fontSize: 20,
@@ -230,11 +254,13 @@ const styles = StyleSheet.create({
     color: '#333333',
     textAlign: 'center',
   },
+
   // Estilo del contenedor de botones
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+
   // Estilo del botón para seguir comprando
   continueShoppingButton: {
     flexDirection: 'row',
@@ -251,6 +277,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 5,
   },
+
   // Estilo del botón para finalizar la compra
   checkoutButton: {
     flexDirection: 'row',
@@ -260,6 +287,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 35, // Margen inferior añadido
   },
+  
   // Estilo del texto del botón para finalizar la compra
   checkoutButtonText: {
     color: '#FFFFFF',

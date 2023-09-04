@@ -1,5 +1,4 @@
 # WottonRN
-App creada utilizando React Native -<br>
 Alumno: Manuel Lus<br>
 Comisión: 55490<br>
 CoderHouse<br>
