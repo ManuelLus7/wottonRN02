@@ -9,11 +9,13 @@ import {
 } from "react-native";
 import ItemCard from "../components/ItemCard";
 import ItemListModal from "../components/ItemListModal";
+import CarritoModal from "../components/CarritoModal";
+import Footer from "../components/Footer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import CarritoModal from "../components/CarritoModal"; // Importa el componente del carrito
 
 const HomeScreen = ({ navigation }) => {
+  // Estados para gestionar los datos y la interfaz
   const [textValue, setTextValue] = useState("");
   const [itemsList, setItemsList] = useState([]);
   const [itemSelected, setItemSelected] = useState(null);
@@ -23,8 +25,9 @@ const HomeScreen = ({ navigation }) => {
   const [itemPrice, setItemPrice] = useState("");
   const [itemQuantity, setItemQuantity] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const [cartModalVisible, setCartModalVisible] = useState(false); // Estado para mostrar/ocultar el modal del carrito
+  const [cartModalVisible, setCartModalVisible] = useState(false);
 
+  // Cargar datos desde AsyncStorage cuando se monta el componente
   useEffect(() => {
     AsyncStorage.getItem("itemsList")
       .then((storedItems) => {
@@ -35,20 +38,18 @@ const HomeScreen = ({ navigation }) => {
       .catch((error) => console.error(error));
   }, []);
 
+  // Guardar los datos en AsyncStorage
   const saveItemsToStorage = () => {
     AsyncStorage.setItem("itemsList", JSON.stringify(itemsList))
       .then(() => console.log("Lista de artículos guardada en AsyncStorage"))
       .catch((error) => console.error(error));
   };
 
+  // Función para manejar el cambio en el campo de texto
   const onHandleChangeItem = (text) => setTextValue(text);
 
+  // Función para agregar un nuevo artículo o guardar uno existente
   const addItem = () => {
-    console.log("Agregando artículo...");
-    console.log("textValue:", textValue);
-    console.log("selectedCategory:", selectedCategory);
-    console.log("itemPrice:", itemPrice);
-    console.log("itemQuantity:", itemQuantity);
     if (
       textValue === "" ||
       selectedCategory === "" ||
@@ -59,26 +60,29 @@ const HomeScreen = ({ navigation }) => {
     }
 
     if (isEditing) {
+      // Editar un artículo existente
       const updatedItems = [...itemsList];
       updatedItems[itemSelected].name = textValue;
       updatedItems[itemSelected].category = selectedCategory;
-      updatedItems[itemSelected].price = itemPrice;
-      updatedItems[itemSelected].quantity = itemQuantity;
+      updatedItems[itemSelected].price = parseFloat(itemPrice);
+      updatedItems[itemSelected].quantity = parseInt(itemQuantity);
       setItemsList(updatedItems);
       setIsEditing(false);
     } else {
+      // Agregar un nuevo artículo
       setItemsList((prevState) => [
         ...prevState,
         {
           id: Math.random(),
           name: textValue,
           category: selectedCategory,
-          price: itemPrice,
-          quantity: itemQuantity,
+          price: parseFloat(itemPrice),
+          quantity: parseInt(itemQuantity),
         },
       ]);
     }
 
+    // Limpiar los campos
     setTextValue("");
     setSelectedCategory("");
     setItemPrice("");
@@ -86,34 +90,30 @@ const HomeScreen = ({ navigation }) => {
     saveItemsToStorage();
   };
 
+  // Función para renderizar cada elemento en la lista de artículos
   const renderListItem = ({ item, index }) => (
     <View style={styles.itemCardContainer}>
       <ItemCard
         item={item}
-        onPressDelete={() =>
-          onHandleModal(
-            index,
-            item.name,
-            item.category,
-            item.price,
-            item.quantity
-          )
-        }
+        onPressDelete={() => onHandleModal(index, item.name)}
+        onPressEdit={() => onEditItem(index)}
       />
     </View>
   );
 
-  const editItem = (index, name, category, price, quantity) => {
-    setItemSelected(index);
-    setModalVisible(false);
+  // Editar un artículo existente
+  const onEditItem = (index) => {
+    const itemToEdit = itemsList[index];
+    setTextValue(itemToEdit.name);
+    setSelectedCategory(itemToEdit.category);
+    setItemPrice(itemToEdit.price.toString());
+    setItemQuantity(itemToEdit.quantity.toString());
     setIsEditing(true);
-    setTextValue(name);
-    setSelectedCategory(category);
-    setItemPrice(price);
-    setItemQuantity(quantity);
+    setItemSelected(index);
   };
 
-  const onHandleDelete = () => {
+  // Confirmar la eliminación de un artículo
+  const confirmDeleteItem = () => {
     let arr = [...itemsList];
     arr.splice(itemSelected, 1);
     setItemsList(arr);
@@ -121,26 +121,19 @@ const HomeScreen = ({ navigation }) => {
     saveItemsToStorage();
   };
 
+  // Cerrar el modal de confirmación de eliminación
   const closeModal = () => {
     setModalVisible(false);
   };
 
-  const onHandleModal = (index, name, category, price, quantity) => {
-    console.log("Mostrando modal...");
-    console.log("index:", index);
-    console.log("name:", name);
-    console.log("category:", category);
-    console.log("price:", price);
-    console.log("quantity:", quantity);
-
+  // Manejar el evento de tocar un artículo para mostrar el modal de confirmación
+  const onHandleModal = (index, name) => {
     setItemSelected(index);
     setItemSelectedName(name);
-    setSelectedCategory(category);
-    setItemPrice(price);
-    setItemQuantity(quantity);
     setModalVisible(true);
   };
 
+  // Borrar todos los datos almacenados en AsyncStorage
   const clearStorage = async () => {
     try {
       await AsyncStorage.clear();
@@ -151,9 +144,16 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
+  // Actualizar la cantidad de artículos en el carrito
+  const actualizarCantidad = (updatedItems) => {
+    setItemsList(updatedItems);
+  };
+
   return (
     <View style={styles.container}>
+      {/* Título de la pantalla */}
       <Text style={styles.title}>Lista de Compras</Text>
+      {/* Encabezado con información de carrito y botón para limpiar */}
       <View style={styles.headerContainer}>
         <View style={styles.headerLeft}>
           <TouchableOpacity
@@ -168,7 +168,9 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.clearButtonText}>Limpiar</Text>
         </TouchableOpacity>
       </View>
+      {/* Formulario para agregar/editar artículos */}
       <View style={styles.inputContainer}>
+        {/* Campos de entrada de datos */}
         <TextInput
           style={styles.input}
           placeholder="Nuevo Artículo"
@@ -184,16 +186,14 @@ const HomeScreen = ({ navigation }) => {
         <TextInput
           style={styles.input}
           placeholder="Precio"
-          value={itemPrice === "" ? "" : itemPrice.toString()} // Convierte el valor a cadena si no está vacío
+          value={itemPrice === "" ? "" : itemPrice.toString()}
           onChangeText={(text) => {
-            // Verifica si el texto es un número antes de asignarlo
             if (!isNaN(text)) {
-              setItemPrice(parseFloat(text)); // Convierte el texto a un número decimal
+              setItemPrice(parseFloat(text));
             }
           }}
           keyboardType="numeric"
         />
-
         <TextInput
           style={styles.input}
           placeholder="Cantidad de Unidades"
@@ -201,12 +201,14 @@ const HomeScreen = ({ navigation }) => {
           onChangeText={setItemQuantity}
           keyboardType="numeric"
         />
+        {/* Botón para agregar/editar artículo */}
         <TouchableOpacity style={styles.addButton} onPress={addItem}>
           <Text style={styles.addButtonText}>
             {isEditing ? "Guardar" : "AGREGAR +"}
           </Text>
         </TouchableOpacity>
       </View>
+      {/* Lista de artículos */}
       <FlatList
         data={itemsList}
         renderItem={renderListItem}
@@ -214,17 +216,23 @@ const HomeScreen = ({ navigation }) => {
         numColumns={2}
         columnWrapperStyle={styles.columnWrapper}
       />
+
+            {/* Añad0 el componente Footer */}
+            <Footer />
+
+      {/* Modal de confirmación de eliminación de artículo */}
       <ItemListModal
         modalVisible={modalVisible}
-        onHandleDelete={onHandleDelete}
+        onHandleDelete={confirmDeleteItem}
         nombreItem={itemSelectedName}
         closeModal={closeModal}
-        onHandleEdit={editItem}
       />
+      {/* Modal del carrito de compras */}
       <CarritoModal
         isVisible={cartModalVisible}
         onHideModal={() => setCartModalVisible(false)}
-        items={itemsList} // Pasa la lista de items al modal del carrito
+        items={itemsList}
+        onUpdateQuantity={actualizarCantidad} // Asegúrate de pasar la función aquí
       />
     </View>
   );
@@ -300,6 +308,9 @@ const styles = StyleSheet.create({
   },
   columnWrapper: {
     justifyContent: "space-between",
+  },
+  cartButton: {
+    marginRight: 10,
   },
 });
 

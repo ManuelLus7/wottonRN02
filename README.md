@@ -3,8 +3,6 @@ App creada utilizando React Native -<br>
 Alumno: Manuel Lus<br>
 Comisión: 55490<br>
 CoderHouse<br>
-Tema de la Aplicación: "Cotizador de Seguros"<br>
-
 
 ## WottonRN:
 Entrega del Segundo Desafio.-
